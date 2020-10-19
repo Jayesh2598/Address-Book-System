@@ -103,4 +103,9 @@ public class Contact {
 	public String toString() {
 		return firstName + " " + lastName;
 	}
+
+	public String writeContact() {
+		return "FirstName: " + firstName + " LastName: " + lastName + " Address: " + address + " City: " + city
+				+ " State: " + state + " ZIP: " + zip + " PhoneNo: " + phoneNo + " Email: " + email;
+	}
 }
