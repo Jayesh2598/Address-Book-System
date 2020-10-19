@@ -1,9 +1,15 @@
 package com.addressBook.model;
 
 public class Contact {
+
 	private String firstName, lastName, address, city, state, email;
 	private int zip;
 	private long phoneNo;
+
+	public Contact(String firstName, String lastName) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
 
 	// Constructor
 	public Contact(String firstName, String lastName, String address, String city, String state, int zip, long phoneNo,
@@ -82,5 +88,14 @@ public class Contact {
 
 	public void setPhoneNo(long phoneNo) {
 		this.phoneNo = phoneNo;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		Contact contact = (Contact) o;
+		if (this.firstName.equalsIgnoreCase(contact.firstName) && this.lastName.equalsIgnoreCase(contact.lastName))
+			return true;
+		else
+			return false;
 	}
 }
