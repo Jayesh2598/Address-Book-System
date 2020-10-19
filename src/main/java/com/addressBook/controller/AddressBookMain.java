@@ -47,8 +47,10 @@ public class AddressBookMain {
 					Set<Contact> personsOfCity = dictionary.getCityPersons().get(city);
 					if (personsOfCity != null) {
 						System.out.println("First Name\tLast Name");
+						long count = personsOfCity.stream().count();
 						personsOfCity.stream().forEach(
 								contact -> System.out.println(contact.getFirstName() + " " + contact.getLastName()));
+						System.out.println("Number of contacts in " + city + " are: " + count);
 					} else
 						System.out.println("No contact from this city registered.\n");
 					break;
@@ -58,8 +60,10 @@ public class AddressBookMain {
 					Set<Contact> personsOfState = dictionary.getStatePersons().get(state);
 					if (personsOfState != null) {
 						System.out.println("First Name\tLast Name");
+						long count = personsOfState.stream().count();
 						personsOfState.stream().forEach(
 								contact -> System.out.println(contact.getFirstName() + "\t" + contact.getLastName()));
+						System.out.println("Number of contacts in " + state + " are: " + count);
 					} else
 						System.out.println("No contact from this state registered.\n");
 					break;
