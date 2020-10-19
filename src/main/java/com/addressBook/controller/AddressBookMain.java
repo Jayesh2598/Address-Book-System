@@ -14,7 +14,7 @@ public class AddressBookMain {
 		AddressBook book = new AddressBook();
 		boolean loop = true;
 		while (loop) {
-			System.out.println("Enter your choice:\n1. Enter a new contact\n2. Exit");
+			System.out.println("Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Exit");
 			int choice = Integer.parseInt(sc.nextLine());
 
 			switch (choice) {
@@ -35,12 +35,20 @@ public class AddressBookMain {
 				long phoneNo = Long.parseLong(sc.nextLine());
 				System.out.println("Enter the email:");
 				String email = sc.nextLine().trim();
-				Contact contact = new Contact(firstName, lastName, address, city, state, zip, phoneNo, email);
-				book.addContact(contact);
+				Contact createContact = new Contact(firstName, lastName, address, city, state, zip, phoneNo, email);
+				book.addContact(createContact);
 				System.out.println("This contact has been successfully created and registered.");
 				break;
 
 			case 2:
+				System.out.println("Enter the first name:");
+				String fName = sc.nextLine().trim();
+				System.out.println("Enter the last name:");
+				String lName = sc.nextLine().trim();
+				book.editContact(fName, lName);
+				break;
+
+			case 3:
 				System.out.println("Thank you for using the application.");
 				loop = false;
 				break;
