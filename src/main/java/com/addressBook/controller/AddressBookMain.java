@@ -5,6 +5,7 @@ import com.addressBook.model.AddressBookDictionary;
 import com.addressBook.model.Contact;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AddressBookMain {
 
@@ -48,8 +49,7 @@ public class AddressBookMain {
 					if (personsOfCity != null) {
 						System.out.println("First Name\tLast Name");
 						long count = personsOfCity.stream().count();
-						personsOfCity.stream().forEach(
-								contact -> System.out.println(contact.getFirstName() + " " + contact.getLastName()));
+						personsOfCity.stream().forEach(contact -> System.out.println(contact.getFirstName() + " " + contact.getLastName()));
 						System.out.println("Number of contacts in " + city + " are: " + count);
 					} else
 						System.out.println("No contact from this city registered.\n");
@@ -61,8 +61,7 @@ public class AddressBookMain {
 					if (personsOfState != null) {
 						System.out.println("First Name\tLast Name");
 						long count = personsOfState.stream().count();
-						personsOfState.stream().forEach(
-								contact -> System.out.println(contact.getFirstName() + "\t" + contact.getLastName()));
+						personsOfState.stream().forEach(contact -> System.out.println(contact.getFirstName() + " " + contact.getLastName()));
 						System.out.println("Number of contacts in " + state + " are: " + count);
 					} else
 						System.out.println("No contact from this state registered.\n");
@@ -88,7 +87,7 @@ public class AddressBookMain {
 		boolean loop = true;
 		while (loop) {
 			System.out.println(
-					"Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Exit from this address book");
+					"Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Sort entries by name\n5. Exit from this address book");
 			int choice2 = Integer.parseInt(SC.nextLine());
 
 			switch (choice2) {
@@ -132,7 +131,16 @@ public class AddressBookMain {
 				book.deleteContact(FName, LName);
 				break;
 			case 4:
-				System.out.println("Exiting from this address book.");
+				List<String> sortedByName = new LinkedList<String>();
+				if (book.getAddressBook().size() > 0) {
+					sortedByName = book.getAddressBook().stream().map(Contact -> Contact.toString()).sorted()
+									.collect(Collectors.toList());
+					sortedByName.stream().forEach(contact -> System.out.println(contact));
+				} else
+					System.out.println("AddressBook is empty.");
+				break;
+			case 5:
+				System.out.println("Exiting from this address book...");
 				loop = false;
 				break;
 			}

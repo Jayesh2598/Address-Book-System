@@ -101,6 +101,6 @@ public class Contact {
 
 	@Override
 	public String toString() {
-		return firstName + "\t" + lastName;
+		return firstName + " " + lastName;
 	}
 }
