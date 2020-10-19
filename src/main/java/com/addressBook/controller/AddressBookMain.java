@@ -14,7 +14,8 @@ public class AddressBookMain {
 		AddressBook book = new AddressBook();
 		boolean loop = true;
 		while (loop) {
-			System.out.println("Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Exit");
+			System.out.println(
+					"Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Exit");
 			int choice = Integer.parseInt(sc.nextLine());
 
 			switch (choice) {
@@ -49,6 +50,13 @@ public class AddressBookMain {
 				break;
 
 			case 3:
+				System.out.println("Enter the first name:");
+				String FName = sc.nextLine().trim();
+				System.out.println("Enter the last name:");
+				String LName = sc.nextLine().trim();
+				book.deleteContact(FName, LName);
+				break;
+			case 4:
 				System.out.println("Thank you for using the application.");
 				loop = false;
 				break;

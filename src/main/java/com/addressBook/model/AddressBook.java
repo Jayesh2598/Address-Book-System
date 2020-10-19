@@ -103,10 +103,21 @@ public class AddressBook {
 				default:
 					System.out.println("Invalid field number. Please enter comma separated 1-8 number(s)");
 					break;
-
 				}
 			}
 			System.out.println("Contact details have been changed successfully!");
+		} else
+			System.out.println("No contact with this name exists.");
+	}
+
+	public void deleteContact(String firstName, String lastName) {
+		Contact contact = null;
+		for (Contact c : addressBook)
+			if (c.getFirstName().equalsIgnoreCase(firstName) && c.getLastName().equalsIgnoreCase(lastName))
+				contact = c;
+		if (contact != null) {
+			addressBook.remove(contact);
+			System.out.println("Contact has been removed successfully!");
 		} else
 			System.out.println("No contact with this name exists.");
 	}
