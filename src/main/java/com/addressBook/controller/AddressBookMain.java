@@ -37,18 +37,31 @@ public class AddressBookMain {
 				dictionary.addAddressBook(accessBookName, accessBook);
 				break;
 			case 3:
+				dictionary.makeMaps();
 				System.out.println("Enter your choice:\n1. In a City \t2. In a State");
 				int choice3 = Integer.parseInt(SC.nextLine());
 				switch (choice3) {
 				case 1:
 					System.out.println("Enter city:");
-					String city = SC.nextLine();
-					dictionary.searchByCity(city);
+					String city = SC.nextLine().toLowerCase();
+					Set<Contact> personsOfCity = dictionary.getCityPersons().get(city);
+					if (personsOfCity != null) {
+						System.out.println("First Name\tLast Name");
+						personsOfCity.stream().forEach(
+								contact -> System.out.println(contact.getFirstName() + " " + contact.getLastName()));
+					} else
+						System.out.println("No contact from this city registered.\n");
 					break;
 				case 2:
 					System.out.println("Enter state:");
-					String state = SC.nextLine();
-					dictionary.searchByState(state);
+					String state = SC.nextLine().toLowerCase();
+					Set<Contact> personsOfState = dictionary.getStatePersons().get(state);
+					if (personsOfState != null) {
+						System.out.println("First Name\tLast Name");
+						personsOfState.stream().forEach(
+								contact -> System.out.println(contact.getFirstName() + "\t" + contact.getLastName()));
+					} else
+						System.out.println("No contact from this state registered.\n");
 					break;
 				default:
 					System.out.println("Invalid entry.");

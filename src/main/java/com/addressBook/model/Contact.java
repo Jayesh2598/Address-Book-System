@@ -98,4 +98,9 @@ public class Contact {
 		else
 			return false;
 	}
+
+	@Override
+	public String toString() {
+		return firstName + "\t" + lastName;
+	}
 }

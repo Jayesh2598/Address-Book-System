@@ -8,15 +8,25 @@ import java.util.stream.Collectors;
 
 public class AddressBookDictionary {
 
-	private HashMap<String, AddressBook> dictionary = new HashMap<>();
+	private Map<String, AddressBook> dictionary = new HashMap<>();
+	private Map<String, Set<Contact>> cityPersons = new HashMap<>();
+	private Map<String, Set<Contact>> statePersons = new HashMap<>();
 
 	// Getter
-	public HashMap<String, AddressBook> getDictionary() {
+	public Map<String, AddressBook> getDictionary() {
 		return dictionary;
 	}
 
+	public Map<String, Set<Contact>> getCityPersons() {
+		return cityPersons;
+	}
+
+	public Map<String, Set<Contact>> getStatePersons() {
+		return statePersons;
+	}
+
 	// Setter
-	public void setDictionary(HashMap<String, AddressBook> dictionary) {
+	public void setDictionary(Map<String, AddressBook> dictionary) {
 		this.dictionary = dictionary;
 	}
 
@@ -31,35 +41,51 @@ public class AddressBookDictionary {
 		return book;
 	}
 	
-	public void searchByCity(String cityName) {
-		Set<Contact> personsByCity = new HashSet<Contact>();
+	public Set<Contact> searchByCity(String cityName) {
+		Set<Contact> personsOfCity = new HashSet<Contact>();
 		for(Map.Entry<String, AddressBook> entry : dictionary.entrySet()) {
 			Set<Contact> listOfPersons = entry.getValue()
-											.getAddressBook()
-											.stream()
-											.filter(contact -> contact.getCity().equalsIgnoreCase(cityName))
-											.collect(Collectors.toSet());
-			listOfPersons.stream().forEach(contact -> personsByCity.add(contact));
+										.getAddressBook().stream()
+										.filter(contact -> contact.getCity().equalsIgnoreCase(cityName))
+										.collect(Collectors.toSet());
+			listOfPersons.stream().forEach(contact -> personsOfCity.add(contact));
 		}
-		if(personsByCity.size()>0)
-			personsByCity.stream().forEach(contact -> System.out.println(contact.getFirstName()+" "+contact.getLastName()));
-		else
-			System.out.println("No contact from this city registered.\n");
+		return personsOfCity;
 	}	
 	
-	public void searchByState(String stateName) {
-		Set<Contact> personsByState = new HashSet<Contact>();
+	public Set<Contact> searchByState(String stateName) {
+		Set<Contact> personsOfState = new HashSet<Contact>();
 		for(Map.Entry<String, AddressBook> entry : dictionary.entrySet()) {
 			Set<Contact> listOfPersons = entry.getValue()
-											.getAddressBook()
-											.stream()
-											.filter(Contact -> Contact.getState().equalsIgnoreCase(stateName))
-											.collect(Collectors.toSet());
-			listOfPersons.stream().forEach(contact -> personsByState.add(contact));
+										.getAddressBook().stream()
+										.filter(Contact -> Contact.getState().equalsIgnoreCase(stateName))
+										.collect(Collectors.toSet());
+			listOfPersons.stream().forEach(contact -> personsOfState.add(contact));
 		}
-		if(personsByState.size()>0)
-			personsByState.stream().forEach(contact -> System.out.println(contact.getFirstName()+" "+contact.getLastName()));
-		else
-			System.out.println("No contact from this state registered.\n");
+		return personsOfState;
+	}
+
+	public void makeMaps() {
+		//Entering values into cityPersons map
+		Set<String> distinctCities = new HashSet<String>();
+		for(Map.Entry<String, AddressBook> entry : dictionary.entrySet()) {
+			distinctCities = entry.getValue()
+								.getAddressBook()
+								.stream()
+								.map(contact -> contact.getCity().toLowerCase())
+								.collect(Collectors.toSet());
+		}
+		distinctCities.stream().forEach(city -> cityPersons.put(city, searchByCity(city)));
+		
+		//Entering values into statePersons map
+		Set<String> distinctStates = new HashSet<String>();
+		for(Map.Entry<String, AddressBook> entry : dictionary.entrySet()) {
+			distinctStates = entry.getValue()
+								.getAddressBook()
+								.stream()
+								.map(contact -> contact.getState().toLowerCase())
+								.collect(Collectors.toSet());
+		}
+		distinctStates.stream().forEach(state -> statePersons.put(state, searchByState(state)));
 	}
 }
