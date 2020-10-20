@@ -2,6 +2,7 @@ package com.addressBook.controller;
 
 import com.addressBook.fileIO.AddressBookCSV;
 import com.addressBook.fileIO.AddressBookFileIOService;
+import com.addressBook.fileIO.AddressBookJSON;
 import com.addressBook.model.AddressBook;
 import com.addressBook.model.AddressBookDictionary;
 import com.addressBook.model.Contact;
@@ -13,9 +14,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddressBookMain {
-	
+
 	public enum IOService {
-		CSV_File, TXT_File;
+		CSV_File, TXT_File, JSON_File;
 	}
 
 	static Scanner SC = new Scanner(System.in);
@@ -55,24 +56,24 @@ public class AddressBookMain {
 					System.out.println("Enter city:");
 					String city = SC.nextLine().toLowerCase();
 					Set<Contact> personsOfCity = dictionary.getCityPersons().get(city);
-					if(personsOfCity != null) {
+					if (personsOfCity != null) {
 						long count = personsOfCity.stream().count();
-						personsOfCity.stream().forEach(contact -> System.out.println(contact.getFirstName()+" "+contact.getLastName()));
-						System.out.println("Number of contacts in "+city+" are: "+count);
-					}
-					else
+						personsOfCity.stream().forEach(
+								contact -> System.out.println(contact.getFirstName() + " " + contact.getLastName()));
+						System.out.println("Number of contacts in " + city + " are: " + count);
+					} else
 						System.out.println("No contact from this city registered.\n");
 					break;
 				case 2:
 					System.out.println("Enter state:");
 					String state = SC.nextLine().toLowerCase();
 					Set<Contact> personsOfState = dictionary.getStatePersons().get(state);
-					if(personsOfState != null) {
+					if (personsOfState != null) {
 						long count = personsOfState.stream().count();
-						personsOfState.stream().forEach(contact -> System.out.println(contact.getFirstName()+"\t"+contact.getLastName()));
-						System.out.println("Number of contacts in "+state+" are: "+count);
-					}
-					else
+						personsOfState.stream().forEach(
+								contact -> System.out.println(contact.getFirstName() + "\t" + contact.getLastName()));
+						System.out.println("Number of contacts in " + state + " are: " + count);
+					} else
 						System.out.println("No contact from this state registered.\n");
 					break;
 				default:
@@ -95,8 +96,10 @@ public class AddressBookMain {
 	public static void editAddressBook(AddressBook book) {
 		boolean loop = true;
 		while (loop) {
-			System.out.println("Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Sort entries by name");
-			System.out.println("5. Sort by City\n6. Sort by State\n7. Sort by ZIP\n8. Read from or Write into a file\n9. Exit from this address book");
+			System.out.println(
+					"Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Sort entries by name");
+			System.out.println(
+					"5. Sort by City\n6. Sort by State\n7. Sort by ZIP\n8. Read from or Write into a file\n9. Exit from this address book");
 			int choice2 = Integer.parseInt(SC.nextLine());
 
 			switch (choice2) {
@@ -139,58 +142,63 @@ public class AddressBookMain {
 				String LName = SC.nextLine().trim();
 				book.deleteContact(FName, LName);
 				break;
-			case 4: 
+			case 4:
 				List<String> sortedByName = new LinkedList<String>();
 				if (book.getAddressBook().size() > 0) {
-					sortedByName = book.getAddressBook().stream()
-							.map(Contact -> Contact.toString())
-							.sorted().collect(Collectors.toList());
+					sortedByName = book.getAddressBook().stream().map(Contact -> Contact.toString()).sorted()
+							.collect(Collectors.toList());
 					sortedByName.stream().forEach(System.out::println);
-				}
-				else
+				} else
 					System.out.println("AddressBook is empty.");
 				break;
 			case 5:
-				if (book.getAddressBook().size() > 0) 
-					book.getAddressBook().stream().sorted((con1,con2) -> con1.getCity().compareToIgnoreCase(con2.getCity())).forEach(System.out::println);
+				if (book.getAddressBook().size() > 0)
+					book.getAddressBook().stream()
+							.sorted((con1, con2) -> con1.getCity().compareToIgnoreCase(con2.getCity()))
+							.forEach(System.out::println);
 				else
 					System.out.println("AddressBook is empty.");
 				break;
 			case 6:
-				if (book.getAddressBook().size() > 0) 
-					book.getAddressBook().stream().sorted((con1,con2) -> con1.getState().compareToIgnoreCase(con2.getState())).forEach(System.out::println);
+				if (book.getAddressBook().size() > 0)
+					book.getAddressBook().stream()
+							.sorted((con1, con2) -> con1.getState().compareToIgnoreCase(con2.getState()))
+							.forEach(System.out::println);
 				else
 					System.out.println("AddressBook is empty.");
 				break;
 			case 7:
-				if (book.getAddressBook().size() > 0) 
-					book.getAddressBook().stream().sorted((con1,con2) -> con1.getZip()-con2.getZip()).forEach(System.out::println);
+				if (book.getAddressBook().size() > 0)
+					book.getAddressBook().stream().sorted((con1, con2) -> con1.getZip() - con2.getZip())
+							.forEach(System.out::println);
 				else
 					System.out.println("AddressBook is empty.");
 				break;
 			case 8:
 				if (book.getAddressBook().size() > 0) {
-					System.out.println("Enter your choice: 1. To TXT File \t2. To CSV File");
+					System.out.println("Enter your choice: \t1. To TXT File\t2. To CSV File\t3. To JSON File");
 					int fileChoice = Integer.parseInt(SC.nextLine());
-					if(fileChoice == 1)
-						writeToFile(IOService.TXT_File, book.getAddressBook());
-					else if(fileChoice == 2)
-						writeToFile(IOService.CSV_File, book.getAddressBook());
-					else
-						System.out.println("Invalid Input");
-					
-					System.out.println("Write successful. Do you want to read the file? (y/n):");
-					char option = SC.nextLine().charAt(0);
-					if(option == 'y')	{
-						if(fileChoice == 1)
-							System.out.println(new AddressBookFileIOService().readFile());
+					if (fileChoice >= 1 && fileChoice <= 3) {
+						if (fileChoice == 1)
+							writeToFile(IOService.TXT_File, book.getAddressBook());
 						else if (fileChoice == 2)
-							new AddressBookCSV().readCSVFile();
-					}	
-					else
-						System.out.println("Thank you.");
-				}	
-				else
+							writeToFile(IOService.CSV_File, book.getAddressBook());
+						else if (fileChoice == 3)
+							writeToFile(IOService.JSON_File, book.getAddressBook());
+						System.out.println("Write successful. Do you want to read the file? (y/n):");
+						char option = SC.nextLine().charAt(0);
+						if (option == 'y') {
+							if (fileChoice == 1)
+								System.out.println(new AddressBookFileIOService().readFile());
+							else if (fileChoice == 2)
+								new AddressBookCSV().readCSVFile();
+							else if (fileChoice == 3)
+								new AddressBookJSON().readJSONFile();
+						} else
+							System.out.println("Thank you.");
+					} else
+						System.out.println("Invalid Input");
+				} else
 					System.out.println("AddressBook is empty.");
 				break;
 			case 9:
@@ -200,15 +208,20 @@ public class AddressBookMain {
 			}
 		}
 	}
-	
+
 	public static void writeToFile(IOService ioService, List<Contact> contactList) {
-		if(ioService.equals(IOService.TXT_File)) {
+		if (ioService.equals(IOService.TXT_File)) {
 			new AddressBookFileIOService().writeToFile(contactList);
-		}
-		else if(ioService.equals(IOService.CSV_File)) {
+		} else if (ioService.equals(IOService.CSV_File)) {
 			try {
 				new AddressBookCSV().writeToCSVFile(contactList);
 			} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e) {
+				e.printStackTrace();
+			}
+		} else if (ioService.equals(IOService.JSON_File)) {
+			try {
+				new AddressBookJSON().writeToJsonFile(contactList);
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
