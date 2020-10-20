@@ -1,14 +1,22 @@
 package com.addressBook.controller;
 
+import com.addressBook.fileIO.AddressBookCSV;
 import com.addressBook.fileIO.AddressBookFileIOService;
 import com.addressBook.model.AddressBook;
 import com.addressBook.model.AddressBookDictionary;
 import com.addressBook.model.Contact;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddressBookMain {
+	
+	public enum IOService {
+		CSV_File, TXT_File;
+	}
 
 	static Scanner SC = new Scanner(System.in);
 
@@ -87,8 +95,8 @@ public class AddressBookMain {
 	public static void editAddressBook(AddressBook book) {
 		boolean loop = true;
 		while (loop) {
-			System.out.println(
-					"Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Sort entries by name\n5. Sort by City\n6. Sort by State\n7. Sort by ZIP\n8. Read from or Write into a file\n9. Exit from this address book");
+			System.out.println("Enter your choice:\n1. Enter a new contact\n2. Edit an existing contact\n3. Delete an existing contact\n4. Sort entries by name");
+			System.out.println("5. Sort by City\n6. Sort by State\n7. Sort by ZIP\n8. Read from or Write into a file\n9. Exit from this address book");
 			int choice2 = Integer.parseInt(SC.nextLine());
 
 			switch (choice2) {
@@ -162,13 +170,22 @@ public class AddressBookMain {
 				break;
 			case 8:
 				if (book.getAddressBook().size() > 0) {
-					new AddressBookFileIOService().writeToFile(book.getAddressBook());
+					System.out.println("Enter your choice: 1. To TXT File \t2. To CSV File");
+					int fileChoice = Integer.parseInt(SC.nextLine());
+					if(fileChoice == 1)
+						writeToFile(IOService.TXT_File, book.getAddressBook());
+					else if(fileChoice == 2)
+						writeToFile(IOService.CSV_File, book.getAddressBook());
+					else
+						System.out.println("Invalid Input");
+					
 					System.out.println("Write successful. Do you want to read the file? (y/n):");
 					char option = SC.nextLine().charAt(0);
 					if(option == 'y')	{
-						List<String> fileEntries = new AddressBookFileIOService().readFile();
-						System.out.println(fileEntries);
-						
+						if(fileChoice == 1)
+							System.out.println(new AddressBookFileIOService().readFile());
+						else if (fileChoice == 2)
+							new AddressBookCSV().readCSVFile();
 					}	
 					else
 						System.out.println("Thank you.");
@@ -180,6 +197,19 @@ public class AddressBookMain {
 				System.out.println("Exiting from this address book...");
 				loop = false;
 				break;
+			}
+		}
+	}
+	
+	public static void writeToFile(IOService ioService, List<Contact> contactList) {
+		if(ioService.equals(IOService.TXT_File)) {
+			new AddressBookFileIOService().writeToFile(contactList);
+		}
+		else if(ioService.equals(IOService.CSV_File)) {
+			try {
+				new AddressBookCSV().writeToCSVFile(contactList);
+			} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
